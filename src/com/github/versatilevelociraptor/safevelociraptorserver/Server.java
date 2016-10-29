@@ -34,7 +34,7 @@ public class Server {
 				if(Integer.parseInt(ID) == Controller.ID) {
 					controller = new Controller(client);
 					connectedClients++;
-				} else if(Integer.parseInt(ID) == Controller.ID) {
+				} else if(Integer.parseInt(ID) == RobotController.ID) {
 					roboController = new RobotController(client);
 					connectedClients++;
 				}
@@ -44,9 +44,31 @@ public class Server {
 		}
 	}
 	
+	public void createCommunicationSession() {
+		new Thread(new ServerThread(roboController, controller)).start();
+		new Thread(new ServerThread(controller, roboController)).start();
+	}
 
 	public static void main(String[] args) {
 		Server server = new Server();
+		server.createCommunicationSession();
 	}
-
+	
+	private class ServerThread implements Runnable{
+		private Client send;
+		private Client recieve;
+		
+		public ServerThread(Client send, Client recieve) {
+			this.send = send;
+			this.recieve = recieve;
+		}
+		
+		/* (non-Javadoc)
+		 * @see java.lang.Runnable#run()
+		 */
+		@Override
+		public void run() {
+			recieve.sendCommand(send.recieveCommand());
+		}	
+	}
 }

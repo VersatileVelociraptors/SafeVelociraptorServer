@@ -10,8 +10,4 @@ public class Controller extends Client{
 		super(socket);
 	}
 
-	
-	
-	
-
 }

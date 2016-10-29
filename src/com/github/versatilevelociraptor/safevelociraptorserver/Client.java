@@ -3,7 +3,6 @@ package com.github.versatilevelociraptor.safevelociraptorserver;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.Socket;
 
@@ -20,6 +19,21 @@ public abstract class Client {
 			e.printStackTrace();
 		}
 	}
+	
+	public String recieveCommand() {
+		String command = "";
+		try {
+			command = reader.readLine();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return command;
+	}
+	
+	public void sendCommand(String command) {
+		writer.println(command);
+	}
+	
 	/**
 	 * @return the socket
 	 */
