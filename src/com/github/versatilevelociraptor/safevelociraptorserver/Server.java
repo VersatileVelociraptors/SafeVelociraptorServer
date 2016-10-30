@@ -8,7 +8,7 @@ import java.net.Socket;
 
 
 public class Server {
-	public static final int PORT = 8005;
+	public static final int PORT = 2585;
 	private ServerSocket serverSocket;
 	private Controller controller;
 	private RobotController roboController;
@@ -28,16 +28,19 @@ public class Server {
 		boolean controlerConnected = false , robotControllerConnected = false;
 		while(connectedClients < MAX_CLIENTS) {
 			try {
+				System.out.println("Looking for clients..");
 				client = serverSocket.accept();
 				connectedClients++;
 				BufferedReader reader = new BufferedReader(new InputStreamReader(client.getInputStream()));
 				String ID = reader.readLine();
 				if(Integer.parseInt(ID) == Controller.ID && !controlerConnected) {
 					controller = new Controller(client);
+					System.out.println("Client Connected!");
 					connectedClients++;
 					controlerConnected = true;
 				} else if(Integer.parseInt(ID) == RobotController.ID && !robotControllerConnected) {
 					roboController = new RobotController(client);
+					System.out.println("Client Connected!");
 					connectedClients++;
 					robotControllerConnected = true;
 				}
@@ -45,6 +48,11 @@ public class Server {
 				e.printStackTrace();
 			}
 		}
+	}
+	
+	public void restart() {
+		initializeConnections();
+		createCommunicationSession();
 	}
 	
 	public void createCommunicationSession() {
