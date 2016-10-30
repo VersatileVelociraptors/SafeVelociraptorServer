@@ -3,10 +3,10 @@ package com.github.versatilevelociraptor.safevelociraptorserver;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Arrays;
 
 
 public class Server {
@@ -46,9 +46,9 @@ public class Server {
 				} else if(ID.equals("" + RobotController.ID) && !robotControllerConnected) {
 					InetAddress address = client.getInetAddress();
 					System.out.println(address.getHostAddress() + " " + address.getHostName());
-					//roboController = new RobotController(client);
+					roboController = new RobotController(client, address);
 					System.out.println("Client Connected!");
-					roboController.sendCommand("Michael is a gypsy");
+					//roboController.sendCommand("Michael is a gypsy");
 					connectedClients++;
 					robotControllerConnected = true;
 				} else {
@@ -95,11 +95,14 @@ public class Server {
 		public void run() {
 			try {
 				while(true) {
-					int num = send.recieveByte();
-					System.out.println(num);
-					recieve.sendInt(num);
+					byte[] arr = send.getBytes();
+					System.out.println(Arrays.toString(arr));
+					if(recieve instanceof RobotController) {
+						((RobotController)recieve).sendBytes(arr);
+					}
+					Thread.sleep(10);
 				}
-			} catch (IOException e) {
+			} catch (IOException | InterruptedException e) {
 				e.printStackTrace();
 				recieve.sendInt(2587);
 				send = null;

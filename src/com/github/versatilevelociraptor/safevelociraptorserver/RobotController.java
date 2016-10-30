@@ -1,5 +1,6 @@
 package com.github.versatilevelociraptor.safevelociraptorserver;
 
+import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
@@ -19,13 +20,32 @@ public class RobotController extends Client{
 		}
 		address = add;
 	}
+	
+	/**
+	 * @param arr the byte array to send
+	 */
+	public void sendBytes(byte[] arr) {
+		DatagramPacket packet = new DatagramPacket(arr, 3, address, 32);
+		try {
+			sock.send(packet);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	/* (non-Javadoc)
 	 * @see com.github.versatilevelociraptor.safevelociraptorserver.Client#sendInt(int)
 	 */
 	@Override
 	public void sendInt(int num) {
-		//DatagramPacket packet = new Data
-		super.sendInt(num);
+		byte[] arr = new byte[1];
+		arr[0] = (byte) num;
+		DatagramPacket packet = new DatagramPacket(arr, 1, address, 32);
+		try {
+			sock.send(packet);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	/* (non-Javadoc)
 	 * @see com.github.versatilevelociraptor.safevelociraptorserver.Client#sendCommand(java.lang.String)

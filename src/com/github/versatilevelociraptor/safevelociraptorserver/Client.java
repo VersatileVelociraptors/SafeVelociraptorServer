@@ -24,6 +24,12 @@ public abstract class Client {
 		return reader.read();
 	}
 	
+	public byte[] getBytes() throws IOException {
+		byte[] bytes = new byte[3];
+		socket.getInputStream().read(bytes);
+		return bytes;
+	}
+	
 	public String recieveCommand() {
 		String command = "";
 		try {
