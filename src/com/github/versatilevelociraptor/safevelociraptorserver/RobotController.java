@@ -25,7 +25,7 @@ public class RobotController extends Client{
 	 * @param arr the byte array to send
 	 */
 	public void sendBytes(byte[] arr) {
-		DatagramPacket packet = new DatagramPacket(arr, 3, address, 32);
+		DatagramPacket packet = new DatagramPacket(arr, 3, address, 8009);
 		try {
 			sock.send(packet);
 		} catch (IOException e) {
@@ -47,6 +47,7 @@ public class RobotController extends Client{
 			e.printStackTrace();
 		}
 	}
+	
 	/* (non-Javadoc)
 	 * @see com.github.versatilevelociraptor.safevelociraptorserver.Client#sendCommand(java.lang.String)
 	 */

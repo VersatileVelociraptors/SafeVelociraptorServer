@@ -30,6 +30,10 @@ public abstract class Client {
 		return bytes;
 	}
 	
+	public void sendChars(int num) {
+		writer.print((char)num);
+	}
+	
 	public String recieveCommand() {
 		String command = "";
 		try {

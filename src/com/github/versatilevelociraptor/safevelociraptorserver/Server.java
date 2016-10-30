@@ -8,13 +8,14 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Arrays;
 
-
 public class Server {
+
 	public static final int PORT = 2585;
 	private ServerSocket serverSocket;
 	private Controller controller;
 	private RobotController roboController;
 	public static final int MAX_CLIENTS = 2;
+
 	public Server() {
 		try {
 			serverSocket = new ServerSocket(PORT);
@@ -29,7 +30,7 @@ public class Server {
 		Socket client;
 		int connectedClients = 0;
 		boolean controlerConnected = false , robotControllerConnected = false;
-		while(connectedClients < MAX_CLIENTS) {
+		while(connectedClients < 1) {
 			try {
 				System.out.println("Looking for clients..");
 				client = serverSocket.accept();
@@ -88,6 +89,7 @@ public class Server {
 			this.recieve = recieve;
 		}
 
+
 		/* (non-Javadoc)
 		 * @see java.lang.Runnable#run()
 		 */
@@ -95,14 +97,25 @@ public class Server {
 		public void run() {
 			try {
 				while(true) {
-					byte[] arr = send.getBytes();
-					System.out.println(Arrays.toString(arr));
-					if(recieve instanceof RobotController) {
-						((RobotController)recieve).sendBytes(arr);
+					String command = send.recieveCommand();
+					int[] data;
+					if(command != null) {
+						data = Arrays.asList(command.split(" ")).stream().map(s -> Integer.parseInt(s)).mapToInt(Integer::intValue).toArray();
+						System.out.println(Arrays.toString(data));
+						if(recieve instanceof RobotController) {							
+							if(data[0] != 0) {
+								recieve.sendCommand(data[0] > 0 ? "L" : "R");
+							}
+							if(data[2] > 0)
+								recieve.sendCommand("F");
+							if(data[1] != 0)
+								recieve.sendCommand(data[1] > 0 ? "D" : "U");
+						}
 					}
+
 					Thread.sleep(10);
 				}
-			} catch (IOException | InterruptedException e) {
+			} catch (InterruptedException e) {
 				e.printStackTrace();
 				recieve.sendInt(2587);
 				send = null;
@@ -118,3 +131,4 @@ public class Server {
 		}	
 	}
 }
+//You will never resolve SD1
