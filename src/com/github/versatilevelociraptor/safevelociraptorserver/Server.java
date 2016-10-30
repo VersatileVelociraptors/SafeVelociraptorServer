@@ -25,18 +25,21 @@ public class Server {
 	public void initializeConnections() {
 		Socket client;
 		int connectedClients = 0;
+		boolean controlerConnected = false , robotControllerConnected = false;
 		while(connectedClients < MAX_CLIENTS) {
 			try {
 				client = serverSocket.accept();
 				connectedClients++;
 				BufferedReader reader = new BufferedReader(new InputStreamReader(client.getInputStream()));
 				String ID = reader.readLine();
-				if(Integer.parseInt(ID) == Controller.ID) {
+				if(Integer.parseInt(ID) == Controller.ID && !controlerConnected) {
 					controller = new Controller(client);
 					connectedClients++;
-				} else if(Integer.parseInt(ID) == RobotController.ID) {
+					controlerConnected = true;
+				} else if(Integer.parseInt(ID) == RobotController.ID && !robotControllerConnected) {
 					roboController = new RobotController(client);
 					connectedClients++;
+					robotControllerConnected = true;
 				}
 			} catch (IOException e) {
 				e.printStackTrace();
