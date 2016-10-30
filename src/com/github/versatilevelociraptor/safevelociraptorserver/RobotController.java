@@ -11,13 +11,15 @@ public class RobotController extends Client{
 	public static final int ID = 118;
 	private InetAddress address;
 	private DatagramSocket sock;
-	public RobotController(Socket socket, InetAddress add) {
+	private int port;
+	public RobotController(Socket socket, InetAddress add, int port) {
 		super(socket);
 		try {
 			sock = new DatagramSocket();
 		} catch (SocketException e) {
 			e.printStackTrace();
 		}
+		this.port = port;
 		address = add;
 	}
 	
@@ -25,7 +27,7 @@ public class RobotController extends Client{
 	 * @param arr the byte array to send
 	 */
 	public void sendBytes(byte[] arr) {
-		DatagramPacket packet = new DatagramPacket(arr, 3, address, 8009);
+		DatagramPacket packet = new DatagramPacket(arr, 1, address, port);
 		try {
 			sock.send(packet);
 		} catch (IOException e) {

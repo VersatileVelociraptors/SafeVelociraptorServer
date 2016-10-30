@@ -13,27 +13,29 @@ public abstract class Client {
 	public Client(Socket socket) {
 		this.socket = socket;
 		try {
-			reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-			writer = new PrintWriter(socket.getOutputStream(), true);
+			if(socket != null) {
+				reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+				writer = new PrintWriter(socket.getOutputStream(), true);
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public int recieveByte() throws IOException {
 		return reader.read();
 	}
-	
+
 	public byte[] getBytes() throws IOException {
 		byte[] bytes = new byte[3];
 		socket.getInputStream().read(bytes);
 		return bytes;
 	}
-	
+
 	public void sendChars(int num) {
 		writer.print((char)num);
 	}
-	
+
 	public String recieveCommand() {
 		String command = "";
 		try {
@@ -43,15 +45,15 @@ public abstract class Client {
 		}
 		return command;
 	}
-	
+
 	public void sendInt(int num) {
 		writer.print(num);
 	}
-	
+
 	public void sendCommand(String command) {
 		writer.println(command);
 	}
-	
+
 	/**
 	 * @return the socket
 	 */
@@ -64,5 +66,5 @@ public abstract class Client {
 	public BufferedReader getReader() {
 		return reader;
 	}
-	
+
 }
