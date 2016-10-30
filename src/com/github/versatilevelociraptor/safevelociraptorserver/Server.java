@@ -35,14 +35,16 @@ public class Server {
 				BufferedReader reader = new BufferedReader(new InputStreamReader(client.getInputStream()));
 				String ID = reader.readLine();
 				System.out.println(ID);
-				if(Integer.parseInt(ID) == Controller.ID && !controlerConnected) {
+				if(ID.equals("" + Controller.ID) && !controlerConnected) {
 					controller = new Controller(client);
+					controller.sendCommand("Michael is a gypsy");
 					System.out.println("Client Connected!");
 					connectedClients++;
 					controlerConnected = true;
-				} else if(Integer.parseInt(ID) == RobotController.ID && !robotControllerConnected) {
+				} else if(ID.equals("" + RobotController.ID) && !robotControllerConnected) {
 					roboController = new RobotController(client);
 					System.out.println("Client Connected!");
+					roboController.sendCommand("Michael is a gypsy");
 					connectedClients++;
 					robotControllerConnected = true;
 				} else {
@@ -57,6 +59,10 @@ public class Server {
 	public void restart() {
 		initializeConnections();
 		createCommunicationSession();
+	}
+	
+	public synchronized void setController() {
+		
 	}
 	
 	public void createCommunicationSession() {
