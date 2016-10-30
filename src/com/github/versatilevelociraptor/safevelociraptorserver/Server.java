@@ -3,6 +3,8 @@ package com.github.versatilevelociraptor.safevelociraptorserver;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.Inet4Address;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -22,7 +24,7 @@ public class Server {
 		}
 		initializeConnections();
 	}
-	
+
 	public void initializeConnections() {
 		Socket client;
 		int connectedClients = 0;
@@ -42,7 +44,9 @@ public class Server {
 					connectedClients++;
 					controlerConnected = true;
 				} else if(ID.equals("" + RobotController.ID) && !robotControllerConnected) {
-					roboController = new RobotController(client);
+					InetAddress address = client.getInetAddress();
+					System.out.println(address.getHostAddress() + " " + address.getHostName());
+					//roboController = new RobotController(client);
 					System.out.println("Client Connected!");
 					roboController.sendCommand("Michael is a gypsy");
 					connectedClients++;
@@ -55,18 +59,18 @@ public class Server {
 			} 
 		}
 	}
-	
+
 	public void restart() {
 		initializeConnections();
 		createCommunicationSession();
 	}
-	
+
 	public synchronized void setController() {
-		
+
 	}
-	
+
 	public void createCommunicationSession() {
-		new Thread(new ServerThread(roboController, controller)).start();
+		System.out.println("Created");
 		new Thread(new ServerThread(controller, roboController)).start();
 	}
 
@@ -74,22 +78,40 @@ public class Server {
 		Server server = new Server();
 		server.createCommunicationSession();
 	}
-	
+
 	private class ServerThread implements Runnable{
 		private Client send;
 		private Client recieve;
-		
+
 		public ServerThread(Client send, Client recieve) {
 			this.send = send;
 			this.recieve = recieve;
 		}
-		
+
 		/* (non-Javadoc)
 		 * @see java.lang.Runnable#run()
 		 */
 		@Override
 		public void run() {
-			recieve.sendCommand(send.recieveCommand());
+			try {
+				while(true) {
+					int num = send.recieveByte();
+					System.out.println(num);
+					recieve.sendInt(num);
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+				recieve.sendInt(2587);
+				send = null;
+				while(send == null) {
+					try {
+						Socket sock = serverSocket.accept();
+						send = new Controller(sock);
+					} catch (IOException e1) {
+						e1.printStackTrace();
+					}
+				}
+			} 
 		}	
 	}
 }

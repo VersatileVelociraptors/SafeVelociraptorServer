@@ -20,6 +20,10 @@ public abstract class Client {
 		}
 	}
 	
+	public int recieveByte() throws IOException {
+		return reader.read();
+	}
+	
 	public String recieveCommand() {
 		String command = "";
 		try {
@@ -28,6 +32,10 @@ public abstract class Client {
 			e.printStackTrace();
 		}
 		return command;
+	}
+	
+	public void sendInt(int num) {
+		writer.print(num);
 	}
 	
 	public void sendCommand(String command) {
