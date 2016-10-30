@@ -16,6 +16,7 @@ public class Server {
 	public Server() {
 		try {
 			serverSocket = new ServerSocket(PORT);
+			serverSocket.setReuseAddress(true);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -30,9 +31,10 @@ public class Server {
 			try {
 				System.out.println("Looking for clients..");
 				client = serverSocket.accept();
-				connectedClients++;
+				System.out.println("Loocking for clients");
 				BufferedReader reader = new BufferedReader(new InputStreamReader(client.getInputStream()));
 				String ID = reader.readLine();
+				System.out.println(ID);
 				if(Integer.parseInt(ID) == Controller.ID && !controlerConnected) {
 					controller = new Controller(client);
 					System.out.println("Client Connected!");
@@ -43,10 +45,12 @@ public class Server {
 					System.out.println("Client Connected!");
 					connectedClients++;
 					robotControllerConnected = true;
+				} else {
+					System.out.println("NOT CORRECT ID");
 				}
 			} catch (IOException e) {
 				e.printStackTrace();
-			}
+			} 
 		}
 	}
 	
