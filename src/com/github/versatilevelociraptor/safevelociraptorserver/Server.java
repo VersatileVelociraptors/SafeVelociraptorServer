@@ -98,6 +98,7 @@ public class Server {
 		 */
 		@Override
 		public void run() {
+			boolean sentStop = false;
 			try {
 				while(true) {
 					String command = send.recieveCommand();
@@ -105,15 +106,16 @@ public class Server {
 					if(command != null) {
 						data = Arrays.asList(command.split(" ")).stream().map(s -> Integer.parseInt(s)).mapToInt(Integer::intValue).toArray();
 						System.out.println(Arrays.toString(data));
-						if(recieve instanceof RobotController) {
-							if(isInDeadZone(data[0]) && isInDeadZone(data[1]) && isInDeadZone(data[2]))
-								recieve.sendCommand("S");
-							else {
-								recieve.sendCommand(data[0] > 0 ? "L" : "R");
-								if(data[2] > 0)
-									recieve.sendCommand("F");
-								recieve.sendCommand(data[1] > 0 ? "D" : "U");
-							}
+						if(!sentStop && isInDeadZone(data[0]) && isInDeadZone(data[1]) && isInDeadZone(data[2])) {
+							recieve.sendCommand("S");
+							sentStop = true;
+						}
+						else {
+							recieve.sendCommand(data[0] > 0 ? "L" : "R");
+							if(data[2] > 0)
+								recieve.sendCommand("F");
+							recieve.sendCommand(data[1] > 0 ? "D" : "U");
+							sentStop = false;
 						}
 					}
 
