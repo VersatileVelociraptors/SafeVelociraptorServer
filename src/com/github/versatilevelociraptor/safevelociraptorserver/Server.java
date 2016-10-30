@@ -30,7 +30,7 @@ public class Server {
 		Socket client;
 		int connectedClients = 0;
 		boolean controlerConnected = false , robotControllerConnected = false;
-		while(connectedClients < 1) {
+		while(connectedClients < 2) {
 			try {
 				System.out.println("Looking for clients..");
 				client = serverSocket.accept();
@@ -89,6 +89,9 @@ public class Server {
 			this.recieve = recieve;
 		}
 
+		public boolean isInDeadZone(double value) {
+			return value == 0;
+		}
 
 		/* (non-Javadoc)
 		 * @see java.lang.Runnable#run()
@@ -102,14 +105,15 @@ public class Server {
 					if(command != null) {
 						data = Arrays.asList(command.split(" ")).stream().map(s -> Integer.parseInt(s)).mapToInt(Integer::intValue).toArray();
 						System.out.println(Arrays.toString(data));
-						if(recieve instanceof RobotController) {							
-							if(data[0] != 0) {
+						if(recieve instanceof RobotController) {
+							if(isInDeadZone(data[0]) && isInDeadZone(data[1]) && isInDeadZone(data[2]))
+								recieve.sendCommand("S");
+							else {
 								recieve.sendCommand(data[0] > 0 ? "L" : "R");
-							}
-							if(data[2] > 0)
-								recieve.sendCommand("F");
-							if(data[1] != 0)
+								if(data[2] > 0)
+									recieve.sendCommand("F");
 								recieve.sendCommand(data[1] > 0 ? "D" : "U");
+							}
 						}
 					}
 
@@ -131,4 +135,6 @@ public class Server {
 		}	
 	}
 }
+
+
 //You will never resolve SD1
